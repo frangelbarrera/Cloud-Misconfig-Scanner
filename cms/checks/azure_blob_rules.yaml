@@ -1,0 +1,11 @@
+- id: AZURE-BLOB-PUBLIC
+  title: Container allows public access
+  severity: HIGH
+  description: Public access to containers can expose sensitive data.
+  remediation: Disable public access at container and account level.
+
+- id: AZURE-BLOB-NO-ENCRYPTION
+  title: No default encryption configured
+  severity: HIGH
+  description: Enable default encryption to protect sensitive data.
+  remediation: Enable default rest encryption using Microsoft-managed or customer-managed keys.

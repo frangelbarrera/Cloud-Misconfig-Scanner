@@ -1,0 +1,32 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "ListBucketsAndAccountBPA",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListAllMyBuckets",
+                "s3:GetAccountPublicAccessBlock"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "BucketConfigRead",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketPolicyStatus",
+                "s3:GetBucketPublicAccessBlock",
+                "s3:GetBucketPolicy",
+                "s3:GetBucketAcl",
+                "s3:GetBucketOwnershipControls",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetBucketVersioning",
+                "s3:GetObjectLockConfiguration",
+                "s3:GetBucketWebsite",
+                "s3:GetBucketLogging",
+                "s3:GetLifecycleConfiguration"
+            ],
+            "Resource": "*"
+        }
+    ]
+}

@@ -1,0 +1,11 @@
+- id: GCP-STORAGE-PUBLIC
+  title: Bucket allows public access
+  severity: HIGH
+  description: Public access to buckets can expose sensitive data.
+  remediation: Remove allUsers/allAuthenticatedUsers bindings.
+
+- id: GCP-STORAGE-NO-ENCRYPTION
+  title: No default encryption configured
+  severity: HIGH
+  description: Enable default encryption to protect sensitive data.
+  remediation: Set a default KMS key for the bucket.
