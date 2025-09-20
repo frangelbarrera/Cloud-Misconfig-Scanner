@@ -1,4 +1,3 @@
-```markdown
 # Cloud-Misconfig-Scanner
 
 **Cloud-Misconfig-Scanner** is a multi-cloud security auditing tool designed to detect common storage misconfigurations across **AWS S3**, **Azure Blob Storage**, and **Google Cloud Storage**.
