@@ -106,3 +106,9 @@ Fork the repository, create a feature branch, and submit a pull request.
 ---
 
 **Cloud-Misconfig-Scanner** — Inspect, detect, and secure your cloud storage configurations.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
