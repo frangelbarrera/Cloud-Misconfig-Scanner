@@ -10,7 +10,7 @@ It is built with a modular architecture, supports multiple output formats (**Tex
 
 ---
 
-## ✨ Features
+##  Features
 
 - **Multi-cloud support**: AWS, Azure, and GCP scanning modules.
 - **Simulated mode**: Run full scans without cloud credentials.
@@ -23,7 +23,7 @@ It is built with a modular architecture, supports multiple output formats (**Tex
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 Cloud-Misconfig-Scanner/
@@ -64,7 +64,7 @@ Cloud-Misconfig-Scanner/
 
 ---
 
-## 🚀 Usage
+##  Usage
 
 ### Simulated Mode (no credentials required)
 ```bash
@@ -88,7 +88,7 @@ python cms.py --provider all --format html
 
 ---
 
-## 🛠 Roadmap
+##  Roadmap
 
 - [ ] Implement real AWS S3 API integration.
 - [ ] Implement real Azure Blob Storage API integration.
@@ -99,7 +99,7 @@ python cms.py --provider all --format html
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 Contributions are welcome!  
 Fork the repository, create a feature branch, and submit a pull request.
 
@@ -109,6 +109,6 @@ Fork the repository, create a feature branch, and submit a pull request.
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
