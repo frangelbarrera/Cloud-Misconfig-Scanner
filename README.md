@@ -58,9 +58,10 @@ python cms.py --provider aws --format html
 ```
 
 #### Simulated Mode (no AWS credentials needed)
-```bash
-python cms.py --provider aws --simulated
-```
+
+The scanner automatically detects when AWS credentials are not available (`~/.aws/credentials` missing) and runs in simulated mode. No extra flag is needed — just run:
+
+python cms.py --provider aws
 
 ### Required AWS IAM Permissions
 
