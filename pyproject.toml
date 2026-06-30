@@ -1,0 +1,88 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cloud-misconfig-scanner"
+version = "0.2.0"
+description = "A Python CLI tool for detecting misconfigurations in cloud storage services (AWS S3, Azure Blob, GCP Storage)."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Frangel Barrera", email = "frangelbarrera@users.noreply.github.com" }
+]
+keywords = [
+    "aws", "s3", "azure", "gcp", "cloud", "security", "misconfig",
+    "scanner", "compliance", "cis"
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "boto3>=1.34.57",
+    "botocore>=1.34.57",
+    "pyyaml>=6.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "moto>=5.0.0",
+    "ruff>=0.3.0",
+]
+
+[project.scripts]
+cloud-misconfig-scanner = "cms.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/frangelbarrera/Cloud-Misconfig-Scanner"
+Repository = "https://github.com/frangelbarrera/Cloud-Misconfig-Scanner"
+Issues = "https://github.com/frangelbarrera/Cloud-Misconfig-Scanner/issues"
+
+[tool.setuptools]
+packages = ["cms", "cms.core", "cms.providers"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"cms" = ["checks/*.yaml"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --cov=cms --cov-report=term-missing --cov-fail-under=80"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # bugbear
+    "UP",  # pyupgrade
+    "C4",  # comprehensions
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",  # function call in argument defaults (boto3 clients)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["cms"]
