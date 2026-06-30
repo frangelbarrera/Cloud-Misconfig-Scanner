@@ -1,114 +1,169 @@
-# Cloud-Misconfig-Scanner
+# Cloud Misconfig Scanner
 
-**Cloud-Misconfig-Scanner** is a multi-cloud security auditing tool designed to detect common storage misconfigurations across **AWS S3**, **Azure Blob Storage**, and **Google Cloud Storage**.
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![AWS](https://img.shields.io/badge/AWS-S3-orange.svg)](https://aws.amazon.com/s3/)
+[![Last Commit](https://img.shields.io/github/last-commit/frangelbarrera/Cloud-Misconfig-Scanner)](https://github.com/frangelbarrera/Cloud-Misconfig-Scanner)
 
-It is built with a modular architecture, supports multiple output formats (**Text**, **JSON**, **HTML**), and includes a **simulated mode** that works without cloud credentials — making it ideal for demonstrations, portfolio projects, and offline testing.
+> A Python CLI tool for detecting misconfigurations in cloud storage services. Currently supports **AWS S3 with real API scanning**. Azure Blob and GCP Storage are on the roadmap.
 
-> **Status:** This project is an **MVP** (Minimum Viable Product).  
-> AWS, Azure, and GCP modules currently support **simulated scanning**.  
-> Real cloud API integration is planned for future releases.
+## Features
 
----
+### AWS S3 (Active)
+- **Real API scanning** via boto3 (uses your AWS credentials)
+- **Account-level Public Access Block** verification
+- **Bucket-level Public Access Block** per bucket
+- **Server-side encryption** detection
+- **Versioning** status check
+- **Bucket ACL** analysis (public-read, public-read-write)
+- **Bucket Policy** analysis (public `Principal: *`)
+- **Access logging** verification
 
-##  Features
+### Azure Blob (Roadmap)
+- Simulated mode only (real SDK integration planned)
 
-- **Multi-cloud support**: AWS, Azure, and GCP scanning modules.
-- **Simulated mode**: Run full scans without cloud credentials.
-- **Multiple output formats**:
-  - **Text** (CLI-friendly)
-  - **JSON** (machine-readable)
-  - **HTML** (color-coded, shareable reports)
-- **Rule-based scanning**: Misconfigurations defined in YAML for easy updates.
-- **Extensible architecture**: Add new providers or rules with minimal changes.
+### GCP Storage (Roadmap)
+- Simulated mode only (real SDK integration planned)
 
----
+## Quick Start
 
-##  Project Structure
+### Prerequisites
+- Python 3.9+
+- AWS account with read-only S3 permissions (for real scanning)
+- AWS credentials configured (`~/.aws/credentials` or environment variables)
+
+### Installation
+
+```bash
+git clone https://github.com/frangelbarrera/Cloud-Misconfig-Scanner.git
+cd Cloud-Misconfig-Scanner
+pip install -r requirements.txt
+```
+
+### Usage
+
+#### Real AWS S3 Scan
+```bash
+# Using default AWS profile
+python cms.py --provider aws
+
+# Using specific profile
+python cms.py --provider aws --profile my-profile
+
+# JSON output
+python cms.py --provider aws --format json
+
+# HTML report (saved to report.html)
+python cms.py --provider aws --format html
+```
+
+#### Simulated Mode (no AWS credentials needed)
+```bash
+python cms.py --provider aws --simulated
+```
+
+### Required AWS IAM Permissions
+
+The scanner requires read-only S3 permissions. See [`docs/iam/aws_least_privilege.json`](docs/iam/aws_least_privilege.json) for the minimal policy.
+
+Key permissions:
+- `s3:ListAllMyBuckets`
+- `s3:GetBucketPublicAccessBlock`
+- `s3:GetBucketEncryption`
+- `s3:GetBucketVersioning`
+- `s3:GetBucketAcl`
+- `s3:GetBucketPolicy`
+- `s3:GetBucketLogging`
+- `s3control:GetPublicAccessBlock`
+
+## Architecture
 
 ```
 Cloud-Misconfig-Scanner/
-│
-├── cms/                        # Core application package
-│   ├── checks/                  # Misconfiguration rule definitions (YAML)
-│   │   ├── aws_s3_rules.yaml
-│   │   ├── azure_blob_rules.yaml
-│   │   └── gcp_storage_rules.yaml
-│   │
-│   ├── core/                    # Core logic and utilities
-│   │   ├── html_reporter.py     # HTML report generator
-│   │   ├── models.py            # Data models (Resource, Finding, ScanResult)
-│   │   ├── reporter.py          # Text/JSON output functions
-│   │   ├── rules.py              # YAML rule loader
-│   │   └── utils.py              # Helper functions
-│   │
-│   ├── providers/               # Cloud provider-specific scanners
-│   │   ├── aws_s3.py             # AWS S3 scanner (simulated/real)
-│   │   ├── azure_blob.py         # Azure Blob scanner (simulated/real)
-│   │   ├── gcp_storage.py        # GCP Storage scanner (simulated/real)
-│   │   └── base.py               # Base scanner class/interface
-│   │
-│   └── export/                   # Export templates and generated reports
-│       ├── templates/
-│       └── report.html
-│
-├── docs/                        # Documentation and IAM policy references
-│   └── iam/
-│       ├── azure_least_privilege.json
-│       ├── gcp_least_privilege.md
-│       └── gcp_least_privilege.pdf
-│
-├── requirements.txt             # Python dependencies
-├── cms.py                       # CLI entry point
-└── README.md                    # Project documentation
+├── cms.py                    # CLI entry point
+├── cms/
+│   ├── core/                 # Core engine
+│   │   ├── models.py         # Resource, Finding, ScanResult dataclasses
+│   │   ├── rules.py          # YAML rule loader
+│   │   ├── reporter.py       # Text/JSON output
+│   │   └── html_reporter.py  # HTML report generator
+│   ├── providers/            # Cloud providers
+│   │   ├── base.py           # ProviderScanner ABC
+│   │   ├── aws_s3.py         # AWS S3 scanner (real API)
+│   │   ├── azure_blob.py     # Azure Blob (simulated, roadmap)
+│   │   └── gcp_storage.py    # GCP Storage (simulated, roadmap)
+│   └── checks/               # YAML rule definitions
+│       ├── aws_s3_rules.yaml
+│       ├── azure_blob_rules.yaml
+│       └── gcp_storage_rules.yaml
+└── docs/
+    └── iam/
+        └── aws_least_privilege.json
 ```
 
----
+## Output Formats
 
-##  Usage
+### Text (default)
+```
+[CRITICAL] S3-BUCKET-PUBLIC-ACL
+  Resource: my-bucket
+  Description: Bucket ACL allows public read access
+  Remediation: Remove AllUsers grant from bucket ACL
 
-### Simulated Mode (no credentials required)
-```bash
-# AWS simulated scan
-python cms.py --provider aws --format text
-
-# Azure simulated scan
-python cms.py --provider azure --format json
-
-# GCP simulated scan
-python cms.py --provider gcp --format html
-
-# Multi-cloud simulated scan
-python cms.py --provider all --format html
+[HIGH] S3-NO-ENCRYPTION
+  Resource: another-bucket
+  Description: Server-side encryption is not enabled
+  Remediation: Enable SSE-S3 or SSE-KMS on the bucket
 ```
 
-### Output Examples
-- **Text**: CLI-friendly list of findings.
-- **JSON**: Machine-readable output for integration.
-- **HTML**: Color-coded report with severity highlighting.
+### JSON
+```json
+{
+  "findings": [
+    {
+      "rule_id": "S3-BUCKET-PUBLIC-ACL",
+      "severity": "CRITICAL",
+      "resource": "my-bucket",
+      "description": "Bucket ACL allows public read access",
+      "remediation": "Remove AllUsers grant from bucket ACL"
+    }
+  ]
+}
+```
 
----
+### HTML
+Interactive HTML report with severity color-coding (CRITICAL=red, HIGH=orange, MEDIUM=yellow, LOW=blue).
 
-##  Roadmap
+## Roadmap
 
-- [ ] Implement real AWS S3 API integration.
-- [ ] Implement real Azure Blob Storage API integration.
-- [ ] Implement real GCP Storage API integration.
-- [ ] Expand rule sets for each provider.
-- [ ] Add unit and integration tests.
-- [ ] CI/CD pipeline for automated testing and releases.
+- [x] AWS S3 real API scanning
+- [ ] AWS S3 Bucket Policy deep analysis
+- [ ] AWS IAM scanning (overly permissive policies)
+- [ ] Azure Blob real API scanning
+- [ ] GCP Storage real API scanning
+- [ ] CIS Benchmark ID mapping
+- [ ] CSV output format
+- [ ] SARIF output for GitHub code scanning
+- [ ] Slack webhook notifications
+- [ ] Docker container support
 
----
+## Contributing
 
-##  Contributing
-Contributions are welcome!  
-Fork the repository, create a feature branch, and submit a pull request.
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md).
 
----
+Areas needing help:
+- Azure Blob real API implementation
+- GCP Storage real API implementation
+- Test coverage (pytest + moto)
+- CI/CD pipeline
 
-**Cloud-Misconfig-Scanner** — Inspect, detect, and secure your cloud storage configurations.
+## Security
 
----
+- **Never commit** AWS credentials to the repo
+- Use `~/.aws/credentials` or environment variables
+- The scanner only requires **read-only** permissions
+- See [`docs/iam/aws_least_privilege.json`](docs/iam/aws_least_privilege.json) for minimal policy
 
-##  License
+## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT - see [LICENSE](LICENSE)
