@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Optional
+
 
 @dataclass
 class Resource:
@@ -8,7 +9,7 @@ class Resource:
     account: str            # account/subscription/project
     region: Optional[str]
     name: str               # bucket/container name
-    meta: Dict = field(default_factory=dict)
+    meta: dict = field(default_factory=dict)
 
 @dataclass
 class Finding:
@@ -18,11 +19,11 @@ class Finding:
     description: str
     remediation: str
     resource: Resource
-    evidence: Dict = field(default_factory=dict)
+    evidence: dict = field(default_factory=dict)
 
 @dataclass
 class ScanResult:
-    findings: List[Finding] = field(default_factory=list)
+    findings: list[Finding] = field(default_factory=list)
 
     def add(self, f: Finding):
         self.findings.append(f)

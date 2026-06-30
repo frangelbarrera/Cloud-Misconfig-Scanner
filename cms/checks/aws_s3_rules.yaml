@@ -1,23 +1,76 @@
 - id: AWS-S3-ACCOUNT-BPA
-  title: Account BPA not fully enabled
+  title: Account Block Public Access not fully enabled
   severity: MEDIUM
-  description: Enable all four S3 Account Block Public Access settings.
-  remediation: Set BlockPublicAcls, IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets to true.
+  description: >-
+    At least one of the four S3 account-level Block Public Access settings
+    is disabled, which can allow buckets or policies to grant public access.
+  remediation: >-
+    Enable all four account-level settings: BlockPublicAcls,
+    IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets.
 
 - id: AWS-S3-BUCKET-BPA
-  title: Bucket BPA has disabled flags
+  title: Bucket Block Public Access has disabled flags
   severity: HIGH
-  description: Enable all four Bucket Public Access Block settings.
-  remediation: Set bucket-level BPA to block and restrict public access.
+  description: >-
+    The bucket-level Block Public Access configuration does not block all
+    four public access vectors, leaving the bucket exposed to public grants.
+  remediation: >-
+    Enable all four bucket-level BPA flags: BlockPublicAcls,
+    IgnorePublicAcls, BlockPublicPolicy, RestrictPublicBuckets.
 
 - id: AWS-S3-ENCRYPTION
-  title: No default encryption
+  title: No default server-side encryption
   severity: HIGH
-  description: Enable default encryption (SSE-S3 or SSE-KMS).
-  remediation: Set ServerSideEncryptionConfiguration.
+  description: >-
+    The bucket has no default server-side encryption configuration, so
+    uploaded objects may be stored unencrypted at rest.
+  remediation: >-
+    Enable default encryption using SSE-S3 or SSE-KMS on the bucket.
 
 - id: AWS-S3-VERSIONING
   title: Versioning not enabled
   severity: HIGH
-  description: Enable versioning to support recovery and ransomware resilience.
-  remediation: Set Versioning=Enabled.
+  description: >-
+    Bucket versioning is disabled or suspended, which prevents object
+    recovery and weakens ransomware resilience.
+  remediation: Enable bucket versioning (Status=Enabled).
+
+- id: AWS-S3-PUBLIC-ACL
+  title: Bucket ACL allows public access
+  severity: CRITICAL
+  description: >-
+    The bucket ACL grants read or write access to AllUsers
+    (http://acs.amazonaws.com/groups/global/AllUsers) or
+    AllAuthenticatedUsers, exposing objects to the public internet.
+  remediation: >-
+    Remove the AllUsers / AllAuthenticatedUsers grant from the bucket ACL
+    and enforce bucket-level Block Public Access.
+
+- id: AWS-S3-PUBLIC-POLICY
+  title: Bucket policy grants access to the public
+  severity: CRITICAL
+  description: >-
+    The bucket policy includes a Principal: "*" statement with an Allow
+    effect, which can grant anonymous access to the bucket.
+  remediation: >-
+    Replace Principal: "*" with scoped IAM principals, or add explicit
+    Deny conditions for public access.
+
+- id: AWS-S3-NO-LOGGING
+  title: Server access logging disabled
+  severity: MEDIUM
+  description: >-
+    Server access logging is not enabled on the bucket, reducing the
+    ability to audit object-level access and investigate incidents.
+  remediation: >-
+    Enable server access logging and target a dedicated logging bucket.
+
+- id: AWS-S3-NO-MFA-DELETE
+  title: MFA Delete is not enabled
+  severity: MEDIUM
+  description: >-
+    MFA Delete is not enabled on the bucket, allowing object versions to
+    be deleted without multi-factor authentication.
+  remediation: >-
+    Enable MFA Delete on the bucket. Requires versioning and must be set
+    via the S3 API by the bucket owner.
