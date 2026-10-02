@@ -1,5 +1,13 @@
-# Cloud permission scope
+**Maintainer:** Frangel Raúl Crespo Barrera
+**Last verified:** 2026-10-02
+**Scope:** AWS scanner operations, IAM permissions, account/region/profile selection, and report handling.
 
-Use the least-privilege, read-only IAM permissions required for each operation and document the target account, region, profile, and resource scope before scanning. Never commit cloud credentials or use production access in tests.
+| Field | Current record |
+|---|---|
+| Status | AWS implementation and tests exist; Azure/GCP are roadmap items unless code proves otherwise. |
+| Evidence | `cms/`, `tests/test_aws_s3_scanner.py`, `tests/test_rules.py`, `pyproject.toml`, `.github/workflows/ci.yml`. |
+| Verification | `pytest -q`; use mocks and no real credentials in tests; review permissions per operation. |
+| Owner | Repository owner; cloud account owner authorizes scans. |
+| Limitations | A repository does not grant cloud access or establish compliance. |
 
-AWS functionality described by the project must be distinguished from planned Azure or GCP support. Reports may contain sensitive configuration and require controlled storage, redaction, retention, and cleanup.
+Use least-privilege read-only IAM permissions and document account, region, profile, and resource scope before scanning. Keep credentials out of commits, logs, fixtures, and reports.
