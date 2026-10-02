@@ -233,3 +233,7 @@ Areas needing help:
 ## License
 
 MIT - see [LICENSE](LICENSE)
+
+## Cloud permission scope
+
+See [docs/cloud-permission-scope.md](docs/cloud-permission-scope.md).
